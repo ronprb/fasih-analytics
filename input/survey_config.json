@@ -1,0 +1,28 @@
+{
+  "selected_surveys": [
+    {
+      "name": "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026",
+      "type": "pencacahan",
+      "other_jadwal": "Pemeriksaan: 1 May - 30 Jun"
+    },
+    {
+      "name": "IMK Triwulanan 2026 - LISTING",
+      "type": "pemutakhiran",
+      "other_jadwal": "Pemeriksaan: 10 - 31 Mar"
+    },
+    {
+      "name": "PENDATAAN IBS TRIWULANAN 2025",
+      "type": "pencacahan"
+    }
+  ],
+  "last_updated": "2026-03-19",
+  "chart_title": "Monitoring Statistik Industri",
+  "_survey_details_backup": {
+    "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026": {
+      "other_jadwal": "Pemeriksaan: 1 May - 30 Jun"
+    },
+    "IMK Triwulanan 2026 - LISTING": {
+      "other_jadwal": "Pemeriksaan: 10 - 31 Mar"
+    }
+  }
+}

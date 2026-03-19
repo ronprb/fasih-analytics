@@ -1,0 +1,143 @@
+import json
+import os
+from datetime import date
+from InquirerPy import inquirer
+
+CONFIG_PATH = "input/survey_config.json"
+
+
+def load_survey_config() -> list:
+    """Returns list of {name, type} dicts."""
+    if os.path.exists(CONFIG_PATH):
+        with open(CONFIG_PATH) as f:
+            entries = json.load(f).get("selected_surveys", [])
+        # Handle old format (list of strings)
+        if entries and isinstance(entries[0], str):
+            return [{"name": n, "type": "pencacahan"} for n in entries]
+        return entries
+    return []
+
+
+def load_selected_surveys() -> list:
+    """Returns list of selected survey names (backward compat for plotter.py)."""
+    return [entry["name"] for entry in load_survey_config()]
+
+
+def save_survey_config(config: list):
+    os.makedirs("input", exist_ok=True)
+    # Preserve existing top-level fields (e.g. chart_title) when re-saving
+    existing = {}
+    if os.path.exists(CONFIG_PATH):
+        with open(CONFIG_PATH) as f:
+            existing = json.load(f)
+
+    # Persist survey details (other_jadwal, startDate, endDate, title) in a
+    # backup dict keyed by survey name so they survive account switches.
+    detail_keys = ("title", "startDate", "endDate", "other_jadwal")
+    backup = existing.get("_survey_details_backup", {})
+    for entry in existing.get("selected_surveys", []):
+        name = entry.get("name")
+        if name:
+            details = {k: entry[k] for k in detail_keys if k in entry}
+            if details:
+                backup[name] = {**backup.get(name, {}), **details}
+    for entry in config:
+        name = entry.get("name")
+        if name:
+            details = {k: entry[k] for k in detail_keys if k in entry}
+            if details:
+                backup[name] = {**backup.get(name, {}), **details}
+
+    existing.update({
+        "selected_surveys": config,
+        "last_updated": str(date.today()),
+        "_survey_details_backup": backup,
+    })
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(existing, f, indent=2, ensure_ascii=False)
+
+
+async def select_surveys(all_surveys: list) -> list:
+    """
+    Step 1: Checkbox to pick which surveys to monitor.
+    Step 2: Checkbox to tag which of those are pemutakhiran (rest = pencacahan).
+    Returns list of {name, type} dicts. Saves to survey_config.json.
+    """
+    prev_config = {entry["name"]: entry["type"] for entry in load_survey_config()}
+
+    # Step 1: Select surveys
+    choices = [
+        {"name": name, "value": name, "enabled": name in prev_config}
+        for name in all_surveys
+    ]
+
+    selected_names = await inquirer.checkbox(
+        message="Select surveys to monitor (Space = toggle, A = all, I = invert, Enter = confirm):",
+        choices=choices,
+        cycle=False,
+        transformer=lambda result: f"{len(result)} survey(s) selected",
+    ).execute_async()
+
+    if not selected_names:
+        print("\n⚠️  No surveys selected.\n")
+        return []
+
+    # Step 2: Tag pemutakhiran surveys
+    prev_pemutakhiran = {name for name, t in prev_config.items() if t == "pemutakhiran"}
+    pemutakhiran_choices = [
+        {"name": name, "value": name, "enabled": name in prev_pemutakhiran}
+        for name in selected_names
+    ]
+
+    pemutakhiran_names = await inquirer.checkbox(
+        message="Which of these are PEMUTAKHIRAN? (unchecked = pencacahan, Enter to confirm):",
+        choices=pemutakhiran_choices,
+        cycle=False,
+        transformer=lambda result: f"{len(result)} pemutakhiran tagged",
+    ).execute_async()
+
+    # Preserve existing schedule fields (startDate, endDate, other_jadwal) across re-selections.
+    # Also pull from _survey_details_backup so fields survive account switches.
+    detail_keys = ("title", "startDate", "endDate", "other_jadwal")
+    existing_cfg = json.load(open(CONFIG_PATH)) if os.path.exists(CONFIG_PATH) else {}
+    backup = existing_cfg.get("_survey_details_backup", {})
+    prev_schedule = {
+        entry["name"]: {k: entry[k] for k in detail_keys if k in entry}
+        for entry in load_survey_config()
+    }
+    for name, details in backup.items():
+        if name not in prev_schedule:
+            prev_schedule[name] = details
+        else:
+            # backup fills in any keys missing from current config entry
+            prev_schedule[name] = {**details, **prev_schedule[name]}
+
+    pemutakhiran_set = set(pemutakhiran_names)
+    config = []
+    for name in selected_names:
+        entry = {"name": name, "type": "pemutakhiran" if name in pemutakhiran_set else "pencacahan"}
+        entry.update(prev_schedule.get(name, {}))  # preserves title, startDate, endDate, other_jadwal
+        config.append(entry)
+
+    # Step 3: Confirm chart title
+    existing_cfg = json.load(open(CONFIG_PATH)) if os.path.exists(CONFIG_PATH) else {}
+    current_title = existing_cfg.get("chart_title", "Monitoring Statistik Industri")
+
+    chart_title = await inquirer.text(
+        message="Chart title (Enter to keep current):",
+        default=current_title,
+    ).execute_async()
+
+    save_survey_config(config)
+
+    # Save chart title back to top-level config
+    with open(CONFIG_PATH) as f:
+        full_cfg = json.load(f)
+    full_cfg["chart_title"] = chart_title
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(full_cfg, f, indent=2, ensure_ascii=False)
+
+    pencacahan_count = sum(1 for e in config if e["type"] == "pencacahan")
+    pemutakhiran_count = sum(1 for e in config if e["type"] == "pemutakhiran")
+    print(f"\n✅ Saved: {pencacahan_count} pencacahan + {pemutakhiran_count} pemutakhiran | Title: {chart_title}\n")
+    return config

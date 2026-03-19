@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip show:*)",
+      "Bash(pip3 show:*)",
+      "Bash(which python3:*)",
+      "Bash(python3:*)",
+      "Bash(chmod:*)",
+      "Bash(source:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)"
+    ]
+  }
+}
