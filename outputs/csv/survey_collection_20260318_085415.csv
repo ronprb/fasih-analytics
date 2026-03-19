@@ -1,2 +1,0 @@
-name,id,unit,description,isActive,surveyType,panelType,areaType,updateListingType,isPublic,createdAt,regionGroupId,survey_period_id,startDate,endDate
-IMK Triwulanan 2026 - LISTING,8b0f896b-bce9-4631-b1eb-c5d2e25dfcdc,BADAN PUSAT STATISTIK,IMK Triwulanan 2026 - LISTING,True,Pencacahan,False,False,True,,2026-03-06T10:15:38.7646447,3a362adc-76d9-438d-874a-a04f637d8b24,09485547-baa2-4026-84da-2d1afd18a3a9,2026-03-08,2026-03-27
