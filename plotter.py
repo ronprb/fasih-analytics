@@ -234,7 +234,7 @@ def generate_plots_2(df, survey_collection_df, prefered_status_order, option:int
             axes[i].set_title(display_title, fontsize=11, pad=14)
             axes[i].text(
                 0.5, 1.02,
-                f"[Cacah: {start} – {end} | {other_jadwal}]",
+                f"[Pencacahan: {start} – {end} {other_jadwal}]",
                 transform=axes[i].transAxes,
                 ha='center', va='bottom',
                 fontsize=8

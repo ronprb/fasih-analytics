@@ -12,10 +12,12 @@
     },
     {
       "name": "PENDATAAN IBS TRIWULANAN 2025",
-      "type": "pencacahan"
+      "type": "pencacahan",
+      "startDate": "2025-01-01",
+      "endDate": "2025-03-31"
     }
   ],
-  "last_updated": "2026-03-19",
+  "last_updated": "2026-03-25",
   "chart_title": "Monitoring Statistik Industri",
   "_survey_details_backup": {
     "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026": {
@@ -23,6 +25,10 @@
     },
     "IMK Triwulanan 2026 - LISTING": {
       "other_jadwal": "Pemeriksaan: 10 - 31 Mar"
+    },
+    "PENDATAAN IBS TRIWULANAN 2025": {
+      "startDate": "2025-01-01",
+      "endDate": "2025-03-31"
     }
   }
 }
