@@ -2,8 +2,7 @@
 
 cd "$(dirname "$0")"
 
-source /opt/anaconda3/etc/profile.d/conda.sh
-conda activate ds-env
+source "$(dirname "$0")/venv/bin/activate"
 
 echo ""
 echo "========================================"
