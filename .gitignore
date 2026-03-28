@@ -1,2 +1,6 @@
 outputs/
 input/session_cache.json
+venv/
+__pycache__/
+*.pyc
+.DS_Store
