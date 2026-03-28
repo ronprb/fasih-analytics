@@ -6,7 +6,7 @@ source "$(dirname "$0")/venv/bin/activate"
 
 echo ""
 echo "========================================"
-echo "   FASIH Scraping - Survey Monitoring"
+echo "   fasih-analytics"
 echo "========================================"
 echo ""
 

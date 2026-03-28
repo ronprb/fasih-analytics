@@ -1,4 +1,4 @@
-# FASIH Scraping - Survey Monitoring
+# fasih-analytics
 
 Tool untuk mengambil data progres dan assignment petugas survei dari platform FASIH (https://fasih-sm.bps.go.id) dan menghasilkan grafik monitoring serta laporan pivot Excel.
 
@@ -16,7 +16,7 @@ Tool untuk mengambil data progres dan assignment petugas survei dari platform FA
 
 ```bash
 # Clone repo dan masuk ke folder
-cd fasih-scrapping
+cd fasih-analytics
 
 # Buat virtual environment
 python3 -m venv venv
@@ -28,8 +28,9 @@ pip install -r requirements.txt
 
 ## Penggunaan
 
-### Cara 1: Double-click (macOS)
-Jalankan `launch.command` langsung dari Finder.
+### Cara 1: Double-click
+- **macOS**: Jalankan `launch.command` dari Finder
+- **Windows**: Jalankan `launch.bat` dari File Explorer
 
 ### Cara 2: Terminal
 
