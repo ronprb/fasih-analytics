@@ -1,4 +1,4 @@
-# FASIH Scraping - Survey Monitoring
+# fasih analytics - Survey Monitoring
 
 Tool untuk mengambil data progres dan assignment petugas survei dari platform FASIH (https://fasih-sm.bps.go.id) dan menghasilkan grafik monitoring serta laporan pivot Excel.
 
