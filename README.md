@@ -24,6 +24,9 @@ source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Install font (macOS)
+brew install --cask font-roboto-condensed
 ```
 
 ## Penggunaan
