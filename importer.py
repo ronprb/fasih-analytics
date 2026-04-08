@@ -3,6 +3,8 @@ import os
 import time
 import httpx
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 COOKIE_CACHE_PATH = "input/session_cache.json"
 _TEST_URL = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/datatable?surveyType=Pencacahan"
@@ -49,7 +51,7 @@ def get_cookies_and_csrf():
         print("⚠️  Cached session expired, re-logging in...\n")
 
     options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     print("🔐 Opening browser... please log in manually.")
     driver.get("https://fasih-sm.bps.go.id")
