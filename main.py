@@ -41,6 +41,17 @@ async def main():
 
     semaphore = asyncio.Semaphore(10)
 
+    # Load previously saved survey collection to compare dates
+    _prev_csv = "outputs/csv/survey_collection_deadline_adjusted.csv"
+    prev_survey_df = pd.read_csv(_prev_csv) if os.path.exists(_prev_csv) else pd.DataFrame()
+    date_changes = []
+
+    def fmt(d):
+        try:
+            return pd.to_datetime(d).strftime('%d %b %Y')
+        except:
+            return str(d)
+
     # Fetch metadata (GET) concurrently
     surveys_base_url = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/"
     survey_periods_url = "https://fasih-sm.bps.go.id/survey/api/v1/survey-periods/my?surveyId="
@@ -48,16 +59,14 @@ async def main():
     async def fetch_metadata(i, j):
         async with semaphore:
             try:
-                survey_response = await get_requests(surveys_base_url + str(i), headers=headers, cookies=cookies)
+                survey_response, periods_response = await asyncio.gather(
+                    get_requests(surveys_base_url + str(i), headers=headers, cookies=cookies),
+                    get_requests(survey_periods_url + str(i), headers=headers, cookies=cookies),
+                )
                 survey_data = survey_response.json()["data"]
-
-                periods_response = await get_requests(survey_periods_url + str(i), headers=headers, cookies=cookies)
                 periods = periods_response.json()["data"]
                 latest_period = periods[-1]
 
-                row = survey_collection_df[survey_collection_df["id"] == i]
-                old_start = row["startDate"].values[0] if "startDate" in row.columns else None
-                old_end = row["endDate"].values[0] if "endDate" in row.columns else None
                 new_start = latest_period["startDate"]
                 new_end = latest_period["endDate"]
 
@@ -71,18 +80,16 @@ async def main():
                     new_end,
                 ]
 
-                def fmt(d):
-                    try:
-                        return pd.to_datetime(d).strftime('%d %b %Y')
-                    except:
-                        return str(d)
+                # Collect date changes to print in summary later
+                if not prev_survey_df.empty and 'name' in prev_survey_df.columns:
+                    prev_row = prev_survey_df[prev_survey_df['name'] == j]
+                    if not prev_row.empty:
+                        old_start = prev_row['startDate'].values[0]
+                        old_end = prev_row['endDate'].values[0]
+                        if str(old_start) != str(new_start) or str(old_end) != str(new_end):
+                            date_changes.append((j, old_start, old_end, new_start, new_end))
 
-                date_info = ""
-                if str(old_start) != str(new_start) or str(old_end) != str(new_end):
-                    date_info = f" | 📅 {fmt(old_start)} – {fmt(old_end)} → {fmt(new_start)} – {fmt(new_end)}"
-                else:
-                    date_info = f" | 📅 {fmt(new_start)} – {fmt(new_end)}"
-                print(f"✅ Status 200 | {j}{date_info}")
+                print(f"✅ Status 200 | {j}")
             except Exception as e:
                 print(f"❌ Error for {j}: {e}")
 
@@ -156,7 +163,7 @@ async def main():
 
     async def fetch_progress_assignment(rowx, url):
         async with semaphore:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.3)
             region1Id = rowx['region1Id']
             surveyPeriodId = rowx['surveyPeriodId']
             prov_id = rowx.get('prov_id', 'unknown')
@@ -179,14 +186,17 @@ async def main():
                 print(f"❗Error processing {survey_name} ({prov_id}): {e}")
                 return None
 
-    # Run per URL in sequence to avoid overload
-    for url in urls:
-        print(f"\n🚀 Fetching data from {url}")
-        report_tasks = [fetch_progress_assignment(rowx, url) for _, rowx in temp_df.iterrows()]
-        report_results = await asyncio.gather(*report_tasks)
-        report_results = [r for r in report_results if r is not None]
-        if report_results:
-            report_assignment_df = pd.concat([report_assignment_df, *report_results], ignore_index=True)
+    # Run both URLs concurrently — each URL has its own rate limit so interleaving reduces per-URL burst
+    print(f"\n🚀 Fetching data from {urls[0]} and {urls[1]} concurrently...")
+    report_tasks = [
+        fetch_progress_assignment(rowx, url)
+        for url in urls
+        for _, rowx in temp_df.iterrows()
+    ]
+    report_results = await asyncio.gather(*report_tasks)
+    report_results = [r for r in report_results if r is not None]
+    if report_results:
+        report_assignment_df = pd.concat([report_assignment_df, *report_results], ignore_index=True)
 
     timestamp = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
     # Adjustment for Sampel and Deadlines
@@ -261,6 +271,12 @@ async def main():
 
 
     generate_pivot()
+
+    if date_changes:
+        print("\n📋 Survey Period Changes:")
+        for name, old_start, old_end, new_start, new_end in date_changes:
+            print(f"  • {name}")
+            print(f"    {fmt(new_start)} – {fmt(new_end)}  →  {fmt(old_start)} – {fmt(old_end)}")
 
     end_time = time.time()
     duration = end_time - start_time

@@ -63,6 +63,23 @@ progress_status_order = [
 assignment_status_order = ['assigned', 'have-not-assigned']
 
 palette_options = {
+    "Ocean": {
+        'COMPLETED': '#5cc08a',   # medium green (Completed by Admin Kab/Kota)
+        'clean': '#5cc08a',
+        'OPEN': '#1da8c7',        # teal blue (Sisa Target)
+        'belum_entry': '#1da8c7',
+        'APPROVED': '#aee0c3',    # light green (Approved by PML)
+        'EDITED': '#b2b2b2',      # medium gray (Edited by Admin Kab/Kota)
+        'REJECTED': '#93d2e4',    # light blue (Rejected by Admin Kab/Kota)
+        'REVOKED': '#fee281',     # light yellow (Revoked by Admin Kab/Kota)
+        'SUBMITTED': '#cccccc',   # light gray (Submitted by PCL)
+        'DRAFT': '#a0d8e8',       # pale blue
+        'SELESAILISTING': '#aee0c3',
+        'BELUMSELESAILISTING': '#1da8c7',
+        'SUDAHTARIKSAMPEL': '#5cc08a',
+        'assigned': '#5cc08a',
+        'have-not-assigned': '#1da8c7',
+    },
     "Professional": {
         # Clean, semantically meaningful, print-friendly
         'COMPLETED': '#4CAF50',   # medium green

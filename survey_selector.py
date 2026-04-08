@@ -129,7 +129,7 @@ async def select_surveys(all_surveys: list) -> list:
     ).execute_async()
 
     # Step 4: Select color palette
-    palette_names = ["Professional", "Warm", "Pastel", "Vivid", "Muted", "DarkMode", "HighContrast"]
+    palette_names = ["Ocean", "Professional", "Warm", "Pastel", "Vivid", "Muted", "DarkMode", "HighContrast"]
     current_palette = existing_cfg.get("palette", "Pastel")
 
     selected_palette = await inquirer.select(
