@@ -39,25 +39,28 @@ async def main():
 
     survey_id_dict = {i: j for i, j in zip(survey_collection_df['id'], survey_collection_df['name'])}
 
+    semaphore = asyncio.Semaphore(10)
+
     # Fetch metadata (GET) concurrently
     base_url = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/"
 
     async def fetch_metadata(i, j):
-        try:
-            response = await get_requests(base_url + str(i), headers=headers, cookies=cookies)
-            json_data = response.json()["data"]
-            survey_collection_df.loc[
-                survey_collection_df["id"] == i,
-                ["regionGroupId", "survey_period_id", "startDate", "endDate"]
-            ] = [
-                json_data["regionGroupId"],
-                json_data["surveyPeriods"][0]["id"],
-                json_data["surveyPeriods"][0]["startDate"],
-                json_data["surveyPeriods"][0]["endDate"],
-            ]
-            print(f"✅ Status 200 | {j}")
-        except Exception as e:
-            print(f"❌ Error for {j}: {e}")
+        async with semaphore:
+            try:
+                response = await get_requests(base_url + str(i), headers=headers, cookies=cookies)
+                json_data = response.json()["data"]
+                survey_collection_df.loc[
+                    survey_collection_df["id"] == i,
+                    ["regionGroupId", "survey_period_id", "startDate", "endDate"]
+                ] = [
+                    json_data["regionGroupId"],
+                    json_data["surveyPeriods"][0]["id"],
+                    json_data["surveyPeriods"][0]["startDate"],
+                    json_data["surveyPeriods"][0]["endDate"],
+                ]
+                print(f"✅ Status 200 | {j}")
+            except Exception as e:
+                print(f"❌ Error for {j}: {e}")
 
     # Run all metadata requests concurrently
     tasks = [fetch_metadata(i, j) for i, j in survey_id_dict.items()]
@@ -76,7 +79,6 @@ async def main():
         survey_collection_df.to_csv(f"outputs/csv/survey_collection_{timestamp}.csv", index=False)
         print("\n📁 Data saved to output folder.\n")
 
-    semaphore = asyncio.Semaphore(10)
     # Get province sample for each survey asynchronously with semaphore
     prov_sampel = {}
 

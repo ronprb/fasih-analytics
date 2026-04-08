@@ -2,6 +2,12 @@
   "selected_surveys": [
     {
       "name": "[PELAKSANAAN] STPIM 2025 (V-IBS26)",
+      "type": "pencacahan",
+      "endDate": "2025-07-31",
+      "other_jadwal": "| Pemeriksaan: 13 Apr - 7 Agu"
+    },
+    {
+      "name": "IMK Triwulanan 2026 - PENCACAHAN",
       "type": "pencacahan"
     },
     {
@@ -15,7 +21,7 @@
       "other_jadwal": "| Pemeriksaan: 10 - 31 Mar"
     }
   ],
-  "last_updated": "2026-04-04",
+  "last_updated": "2026-04-08",
   "chart_title": "Monitoring Statistik Industri",
   "_survey_details_backup": {
     "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026": {
@@ -27,6 +33,10 @@
     "PENDATAAN IBS TRIWULANAN 2025": {
       "startDate": "2025-01-01",
       "endDate": "2025-03-31"
+    },
+    "[PELAKSANAAN] STPIM 2025 (V-IBS26)": {
+      "endDate": "2025-07-31",
+      "other_jadwal": "| Pemeriksaan: 13 Apr - 7 Agu"
     }
   }
 }
