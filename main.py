@@ -42,23 +42,47 @@ async def main():
     semaphore = asyncio.Semaphore(10)
 
     # Fetch metadata (GET) concurrently
-    base_url = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/"
+    surveys_base_url = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/"
+    survey_periods_url = "https://fasih-sm.bps.go.id/survey/api/v1/survey-periods/my?surveyId="
 
     async def fetch_metadata(i, j):
         async with semaphore:
             try:
-                response = await get_requests(base_url + str(i), headers=headers, cookies=cookies)
-                json_data = response.json()["data"]
+                survey_response = await get_requests(surveys_base_url + str(i), headers=headers, cookies=cookies)
+                survey_data = survey_response.json()["data"]
+
+                periods_response = await get_requests(survey_periods_url + str(i), headers=headers, cookies=cookies)
+                periods = periods_response.json()["data"]
+                latest_period = periods[-1]
+
+                row = survey_collection_df[survey_collection_df["id"] == i]
+                old_start = row["startDate"].values[0] if "startDate" in row.columns else None
+                old_end = row["endDate"].values[0] if "endDate" in row.columns else None
+                new_start = latest_period["startDate"]
+                new_end = latest_period["endDate"]
+
                 survey_collection_df.loc[
                     survey_collection_df["id"] == i,
                     ["regionGroupId", "survey_period_id", "startDate", "endDate"]
                 ] = [
-                    json_data["regionGroupId"],
-                    json_data["surveyPeriods"][0]["id"],
-                    json_data["surveyPeriods"][0]["startDate"],
-                    json_data["surveyPeriods"][0]["endDate"],
+                    survey_data["regionGroupId"],
+                    latest_period["id"],
+                    new_start,
+                    new_end,
                 ]
-                print(f"✅ Status 200 | {j}")
+
+                def fmt(d):
+                    try:
+                        return pd.to_datetime(d).strftime('%d %b %Y')
+                    except:
+                        return str(d)
+
+                date_info = ""
+                if str(old_start) != str(new_start) or str(old_end) != str(new_end):
+                    date_info = f" | 📅 {fmt(old_start)} – {fmt(old_end)} → {fmt(new_start)} – {fmt(new_end)}"
+                else:
+                    date_info = f" | 📅 {fmt(new_start)} – {fmt(new_end)}"
+                print(f"✅ Status 200 | {j}{date_info}")
             except Exception as e:
                 print(f"❌ Error for {j}: {e}")
 

@@ -45,7 +45,7 @@ def adjust_deadline(df):
     from survey_selector import load_survey_config
 
     if 'other_jadwal' not in df.columns:
-        df['other_jadwal'] = "-"
+        df['other_jadwal'] = None
 
     for entry in load_survey_config():
         name = entry['name']
@@ -56,7 +56,7 @@ def adjust_deadline(df):
             df.loc[mask, 'startDate'] = entry['startDate']
         if entry.get('endDate'):
             df.loc[mask, 'endDate'] = entry['endDate']
-        df.loc[mask, 'other_jadwal'] = entry.get('other_jadwal') or "-"
+        df.loc[mask, 'other_jadwal'] = entry.get('other_jadwal') or None
 
     return df
 
