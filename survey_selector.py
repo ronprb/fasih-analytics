@@ -128,16 +128,27 @@ async def select_surveys(all_surveys: list) -> list:
         default=current_title,
     ).execute_async()
 
+    # Step 4: Select color palette
+    palette_names = ["Professional", "Warm", "Pastel", "Vivid", "Muted", "DarkMode", "HighContrast"]
+    current_palette = existing_cfg.get("palette", "Pastel")
+
+    selected_palette = await inquirer.select(
+        message="Select color palette for the dashboard:",
+        choices=palette_names,
+        default=current_palette,
+    ).execute_async()
+
     save_survey_config(config)
 
-    # Save chart title back to top-level config
+    # Save chart title and palette back to top-level config
     with open(CONFIG_PATH) as f:
         full_cfg = json.load(f)
     full_cfg["chart_title"] = chart_title
+    full_cfg["palette"] = selected_palette
     with open(CONFIG_PATH, "w") as f:
         json.dump(full_cfg, f, indent=2, ensure_ascii=False)
 
     pencacahan_count = sum(1 for e in config if e["type"] == "pencacahan")
     pemutakhiran_count = sum(1 for e in config if e["type"] == "pemutakhiran")
-    print(f"\n✅ Saved: {pencacahan_count} pencacahan + {pemutakhiran_count} pemutakhiran | Title: {chart_title}\n")
+    print(f"\n✅ Saved: {pencacahan_count} pencacahan + {pemutakhiran_count} pemutakhiran | Title: {chart_title} | Palette: {selected_palette}\n")
     return config

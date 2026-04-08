@@ -9,7 +9,7 @@ from api_client import post_requests, get_requests
 from adjust_survey import adjust_period, adjust_sample, adjust_deadline
 from transformer import json_to_df, pemutakhiran_json_to_df
 from data_loader import get_survey_name
-from plotter import generate_plots, generate_plots_2
+from plotter import generate_plots_2
 from survey_selector import select_surveys
 from generate_pivot import main as generate_pivot
 
@@ -132,6 +132,7 @@ async def main():
 
     async def fetch_progress_assignment(rowx, url):
         async with semaphore:
+            await asyncio.sleep(0.5)
             region1Id = rowx['region1Id']
             surveyPeriodId = rowx['surveyPeriodId']
             prov_id = rowx.get('prov_id', 'unknown')
@@ -238,8 +239,10 @@ async def main():
     generate_pivot()
 
     end_time = time.time()
-    duration_minutes = (end_time - start_time) / 60
-    print("Execution time:", duration_minutes, "minutes")
+    duration = end_time - start_time
+    minutes = int(duration // 60)
+    seconds = int(duration % 60)
+    print(f"\n⏱️  Scraping completed in {minutes}m {seconds}s")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -4,127 +4,24 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from config import palette_options
-import time
 from datetime import datetime
 
+def _load_palette():
+    import json, os as _os
+    cfg_path = "input/survey_config.json"
+    if _os.path.exists(cfg_path):
+        cfg = json.load(open(cfg_path))
+        palette_name = cfg.get("palette", "Pastel")
+        return palette_options.get(palette_name, palette_options["Pastel"])
+    return palette_options["Pastel"]
+
 def get_color(col_name):
-    pattern_colors = palette_options['Pastel']
+    pattern_colors = _load_palette()
     for pattern, color in pattern_colors.items():
         if col_name.upper().startswith(pattern.upper()):
             return color
     return '#C9C9C9'  # fallback for unrecognized statuses
 
-def generate_plots(df, survey_collection_df, prefered_status_order, option:int):
-    if option not in [1, 2]:
-        raise ValueError("Parameter 'option' must be either 1 or 2.")
-    os.makedirs("images", exist_ok=True)
-    
-
-    show = pd.read_excel('input/show.xlsx')
-
-    show_ls = show.loc[show['show']==1,'name'].tolist()
-
-    if option==1:
-        status_order = [col for col in df.columns if col not in ['kd_kab', 'time_stamp', 'name', 'prov_id', 'total', 'assigned', 'have-not-assigned', 'type']]
-    else:
-        status_order = ['assigned', 'have-not-assigned']
-    status_order.sort()
-    
-
-
-    prefered_status_order = [col for col in prefered_status_order if col in df.columns] if option ==1 else ['assigned', 'have-not-assigned']
-
-    if option==1:
-        color_map = {col: get_color(col) for col in df.columns if col not in ['kd_kab', 'time_stamp', 'name', 'prov_id', 'total']}
-    else:
-        color_map = {'assigned': '#B5EAD7', 'have-not-assigned': '#E57373'}
-
-    n = len(show_ls)
-    cols = 2
-    total_plots = n + 1  # +1 for legend
-    rows = math.ceil(total_plots / cols)
-
-    fig, axes = plt.subplots(rows, cols, figsize=(cols * 6, rows * 4))
-    axes = axes.flatten()
-
-    for i, survey_name in enumerate(show_ls):
-        temp_df = df.loc[
-            df['name'] == survey_name,
-            ['kd_kab'] + prefered_status_order
-        ].copy()
-
-        # Clean numeric columns
-        for col in prefered_status_order:
-            if pd.api.types.is_numeric_dtype(temp_df[col]):
-                temp_df[col] = temp_df[col].fillna(0).astype(int)
-
-        temp_df.set_index('kd_kab', inplace=True)
-        temp_df.sort_index(inplace=True)
-        x_labels = temp_df.index.tolist()
-        x_pos = np.arange(len(x_labels))
-
-        # Adjust bar width dynamically
-        if len(x_pos) == 1:
-            bar_width = 0.2
-        elif len(x_pos) == 2:
-            bar_width = 0.15
-        else:
-            bar_width = 0.5
-
-        bottom = np.zeros(len(x_pos))
-        for col in prefered_status_order:
-            axes[i].bar(
-                x_pos,
-                temp_df[col].values,
-                width=bar_width,
-                bottom=bottom,
-                label=col,
-                color=color_map.get(col, 'black'),
-                align='center'
-            )
-            bottom += temp_df[col].values
-
-        # Title with optional date range
-        info = survey_collection_df[survey_collection_df['name'] == survey_name]
-        if not info.empty:
-            start = pd.to_datetime(info['startDate'].values[0]).strftime('%d %b')
-            end = pd.to_datetime(info['endDate'].values[0]).strftime('%d %b')
-            title = f"{survey_name}\n({start} – {end})"
-        else:
-            title = survey_name
-
-        axes[i].set_title(title, fontsize=10)
-        axes[i].set_ylabel("Jumlah")
-        axes[i].set_xticks(x_pos)
-        axes[i].set_xticklabels(x_labels, rotation=45, fontsize=8)
-        axes[i].grid(True, axis='y', linestyle='--', alpha=0.5)
-        if len(x_pos) == 1:
-            axes[i].set_xlim(x_pos[0] - 0.5, x_pos[0] + 0.5)
-
-    # Add legend in the last subplot
-    legend_ax = axes[n]
-    legend_ax.axis('off')
-    legend_labels = [col for col in prefered_status_order if col in color_map]
-    legend_handles = [plt.Rectangle((0, 0), 1, 1, color=color_map[col]) for col in legend_labels]
-    legend_ax.legend(
-        handles=legend_handles,
-        labels=legend_labels,
-        loc='center',
-        fontsize=8,
-        frameon=False
-    )
-
-    # Remove extra axes
-    for j in range(n + 1, len(axes)):
-        fig.delaxes(axes[j])
-
-    plt.figtext(1, 0.05, f"Last updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}", horizontalalignment='right')
-    fig.suptitle("Monitoring Statistik Ekonomi Produksi" if option==1 else "Report User Assignments", fontsize=18)
-    plt.tight_layout(rect=[0, 0.03, 1, 0.98])
-
-    # Save once
-    plt.savefig(f"images/progress_assignment.png" if option==1 else "images/user_assignment.png", dpi=600, bbox_inches='tight', pad_inches=0)
-    plt.show()
 
 def generate_plots_2(df, survey_collection_df, prefered_status_order, option:int, show_ls=None, filename=None, title_map=None):
     if option not in [1, 2]:
@@ -156,10 +53,7 @@ def generate_plots_2(df, survey_collection_df, prefered_status_order, option:int
     else:
         prefered_status_order = ['assigned', 'have-not-assigned']
 
-    if option==1:
-        color_map = {col: get_color(col) for col in df.columns if col not in ['kd_kab', 'time_stamp', 'name', 'prov_id', 'total']}
-    else:
-        color_map = {'assigned': '#B5EAD7', 'have-not-assigned': '#E57373'}
+    color_map = {col: get_color(col) for col in df.columns if col not in ['kd_kab', 'time_stamp', 'name', 'prov_id', 'total']}
 
     n = len(show_ls)
     cols = 2
@@ -229,12 +123,13 @@ def generate_plots_2(df, survey_collection_df, prefered_status_order, option:int
         if not info.empty:
             start = pd.to_datetime(info['startDate'].values[0]).strftime('%d %b')
             end = pd.to_datetime(info['endDate'].values[0]).strftime('%d %b')
-            other_jadwal = info['other_jadwal'].values[0] if 'other_jadwal' in info.columns and pd.notna(info['other_jadwal'].values[0]) else "-"
+            other_jadwal = info['other_jadwal'].values[0] if 'other_jadwal' in info.columns and pd.notna(info['other_jadwal'].values[0]) else ""
+            subtitle = f"[Pencacahan: {start} – {end}{' | ' + other_jadwal if other_jadwal else ''}]"
 
             axes[i].set_title(display_title, fontsize=11, pad=14)
             axes[i].text(
                 0.5, 1.02,
-                f"[Pencacahan: {start} – {end} {other_jadwal}]",
+                subtitle,
                 transform=axes[i].transAxes,
                 ha='center', va='bottom',
                 fontsize=8

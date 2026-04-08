@@ -63,6 +63,42 @@ progress_status_order = [
 assignment_status_order = ['assigned', 'have-not-assigned']
 
 palette_options = {
+    "Professional": {
+        # Clean, semantically meaningful, print-friendly
+        'COMPLETED': '#4CAF50',   # medium green
+        'clean': '#4CAF50',
+        'OPEN': '#F44336',        # medium red
+        'belum_entry': '#F44336',
+        'APPROVED': '#90A4AE',    # blue-grey (neutral)
+        'EDITED': '#42A5F5',      # medium blue
+        'REJECTED': '#FF7043',    # orange-red (distinct from OPEN)
+        'REVOKED': '#AB47BC',     # medium purple
+        'SUBMITTED': '#FFA726',   # amber/orange
+        'DRAFT': '#78909C',       # steel blue-grey
+        'SELESAILISTING': '#90A4AE',
+        'BELUMSELESAILISTING': '#F44336',
+        'SUDAHTARIKSAMPEL': '#4CAF50',
+        'assigned': '#4CAF50',
+        'have-not-assigned': '#F44336',
+    },
+    "Warm": {
+        # Softer tones, good for presentations
+        'COMPLETED': '#81C784',   # soft green
+        'clean': '#81C784',
+        'OPEN': '#E57373',        # soft red
+        'belum_entry': '#E57373',
+        'APPROVED': '#B0BEC5',    # light blue-grey
+        'EDITED': '#64B5F6',      # soft blue
+        'REJECTED': '#FF8A65',    # soft orange (distinct from OPEN)
+        'REVOKED': '#CE93D8',     # soft purple
+        'SUBMITTED': '#FFD54F',   # soft yellow (darker than pastel)
+        'DRAFT': '#A1887F',       # warm brown-grey
+        'SELESAILISTING': '#B0BEC5',
+        'BELUMSELESAILISTING': '#E57373',
+        'SUDAHTARIKSAMPEL': '#81C784',
+        'assigned': '#81C784',
+        'have-not-assigned': '#E57373',
+    },
     "Vivid": {
         'COMPLETED': '#00C853',
         'clean': '#00C853',
@@ -70,13 +106,15 @@ palette_options = {
         'belum_entry': '#D50000',
         'APPROVED': '#9E9E9E',
         'EDITED': '#2962FF',
-        'REJECTED': '#C51162',
+        'REJECTED': '#FF6D00',    # orange (distinct from OPEN dark red)
         'REVOKED': '#AA00FF',
         'SUBMITTED': '#FFD600',
-        'DRAFT': '#6200EA',
+        'DRAFT': '#00BCD4',       # cyan (distinct from REVOKED purple)
         'SELESAILISTING': '#9E9E9E',
         'BELUMSELESAILISTING': '#D50000',
         'SUDAHTARIKSAMPEL': '#00C853',
+        'assigned': '#00C853',
+        'have-not-assigned': '#D50000',
     },
     "Muted": {
         'COMPLETED': '#66BB6A',
@@ -85,57 +123,65 @@ palette_options = {
         'belum_entry': '#EF5350',
         'APPROVED': '#BDBDBD',
         'EDITED': '#64B5F6',
-        'REJECTED': '#E57373',
+        'REJECTED': '#FFA07A',    # light salmon (distinct from OPEN)
         'REVOKED': '#BA68C8',
-        'SUBMITTED': '#FFF176',
+        'SUBMITTED': '#FFB74D',   # soft orange (visible on white)
         'DRAFT': '#9575CD',
         'SELESAILISTING': '#BDBDBD',
         'BELUMSELESAILISTING': '#EF5350',
         'SUDAHTARIKSAMPEL': '#66BB6A',
+        'assigned': '#66BB6A',
+        'have-not-assigned': '#EF5350',
+    },
+    "Pastel": {
+        'COMPLETED': '#B5EAD7',
+        'clean': '#B5EAD7',
+        'OPEN': '#FF9AA2',        # soft pink-red
+        'belum_entry': '#FF9AA2',
+        'APPROVED': '#D3D3D3',
+        'EDITED': '#ADD8E6',
+        'REJECTED': '#FFDAC1',    # soft peach (distinct from OPEN)
+        'REVOKED': '#C7CEEA',     # soft periwinkle (distinct from others)
+        'SUBMITTED': '#FFFACD',   # lemon chiffon (slightly more visible)
+        'DRAFT': '#E0BBE4',
+        'SELESAILISTING': '#D3D3D3',
+        'BELUMSELESAILISTING': '#FF9AA2',
+        'SUDAHTARIKSAMPEL': '#B5EAD7',
+        'assigned': '#B5EAD7',
+        'have-not-assigned': '#FF9AA2',
     },
     "DarkMode": {
         'COMPLETED': '#2E7D32',
         'clean': '#2E7D32',
         'OPEN': '#C62828',
         'belum_entry': '#C62828',
-        'APPROVED': '#424242',
+        'APPROVED': '#607D8B',    # blue-grey (more visible than near-black)
         'EDITED': '#0277BD',
-        'REJECTED': '#AD1457',
+        'REJECTED': '#E65100',    # deep orange (distinct from OPEN)
         'REVOKED': '#6A1B9A',
         'SUBMITTED': '#F9A825',
-        'DRAFT': '#4527A0',
-        'SELESAILISTING': '#424242',
+        'DRAFT': '#00838F',       # dark cyan (distinct from REVOKED purple)
+        'SELESAILISTING': '#607D8B',
         'BELUMSELESAILISTING': '#C62828',
         'SUDAHTARIKSAMPEL': '#2E7D32',
+        'assigned': '#2E7D32',
+        'have-not-assigned': '#C62828',
     },
     "HighContrast": {
-        'COMPLETED': '#00FF00',
-        'clean': '#00FF00',
-        'OPEN': '#FF0000',
-        'belum_entry': '#FF0000',
-        'APPROVED': '#AAAAAA',
-        'EDITED': '#0099FF',
-        'REJECTED': '#FF00FF',
-        'REVOKED': '#9900FF',
-        'SUBMITTED': '#FFFF00',
-        'DRAFT': '#6600CC',
-        'SELESAILISTING': '#AAAAAA',
-        'BELUMSELESAILISTING': '#FF0000',
-        'SUDAHTARIKSAMPEL': '#00FF00',
+        'COMPLETED': '#00C853',   # strong green (less harsh than #00FF00)
+        'clean': '#00C853',
+        'OPEN': '#D50000',        # strong red (less harsh than #FF0000)
+        'belum_entry': '#D50000',
+        'APPROVED': '#757575',
+        'EDITED': '#0091EA',
+        'REJECTED': '#FF6D00',    # orange
+        'REVOKED': '#AA00FF',
+        'SUBMITTED': '#FFD600',   # yellow
+        'DRAFT': '#00B8D4',       # cyan
+        'SELESAILISTING': '#757575',
+        'BELUMSELESAILISTING': '#D50000',
+        'SUDAHTARIKSAMPEL': '#00C853',
+        'assigned': '#00C853',
+        'have-not-assigned': '#D50000',
     },
-    'Pastel': {
-        'COMPLETED': '#B5EAD7',
-        'clean': '#B5EAD7',
-        'OPEN': '#E57373',
-        'belum_entry': '#E57373',
-        'APPROVED': '#D3D3D3',
-        'EDITED': '#ADD8E6',
-        'REJECTED': '#E57373',
-        'REVOKED': '#E57373',
-        'SUBMITTED': '#FFF2B2',
-        'DRAFT': '#E0BBE4',
-        'SELESAILISTING': '#D3D3D3',
-        'BELUMSELESAILISTING': '#E57373',
-        'SUDAHTARIKSAMPEL': '#B5EAD7',
-    }
 }
