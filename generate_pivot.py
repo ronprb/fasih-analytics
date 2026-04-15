@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -65,7 +66,16 @@ def build_assignment_pivot():
 
 
 def build_pemutakhiran_pivot():
-    df = pd.read_csv(f"{OUTPUT_DIR}/report_pemutakhiran.csv")
+    csv_path = f"{OUTPUT_DIR}/report_pemutakhiran.csv"
+
+    # Return an empty pivot when there are no PEMUTAKHIRAN surveys
+    if not os.path.exists(csv_path):
+        return None
+
+    df = pd.read_csv(csv_path)
+
+    if df.empty:
+        return None
 
     survey_names = df["name"].unique().tolist()
 
@@ -215,7 +225,15 @@ def main():
     write_pivot_sheet(ws_assign, assignment_pivot, "Report Assignment")
 
     ws_pem = wb.create_sheet("Pemutakhiran")
-    write_pivot_sheet(ws_pem, pemutakhiran_pivot, "Report Pemutakhiran")
+    if pemutakhiran_pivot is None:
+        # No PEMUTAKHIRAN surveys — write a placeholder note so the sheet still exists
+        note_cell = ws_pem.cell(row=1, column=1, value="Tidak ada data Pemutakhiran pada periode ini.")
+        note_cell.font = Font(bold=True, color="888888")
+        note_cell.alignment = Alignment(horizontal="left", vertical="center")
+        ws_pem.column_dimensions["A"].width = 50
+        print("ℹ️  No PEMUTAKHIRAN data — placeholder sheet written.")
+    else:
+        write_pivot_sheet(ws_pem, pemutakhiran_pivot, "Report Pemutakhiran")
 
     wb.save(OUTPUT_XLSX)
     print(f"Saved: {OUTPUT_XLSX}")

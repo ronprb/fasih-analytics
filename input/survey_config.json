@@ -1,14 +1,22 @@
 {
   "selected_surveys": [
     {
+      "name": "SURVEI IBS TRIWULANAN (SIBSTR) 2026",
+      "type": "pencacahan",
+      "endDate": "2025-04-20",
+      "other_jadwal": "Pemeriksaan: 10 Apr - 30 Jun"
+    },
+    {
+      "name": "SURVEI TRIWULANAN PELAKU USAHA (KEK-KI) 2026",
+      "type": "pencacahan",
+      "endDate": "2025-04-20",
+      "other_jadwal": "Pemeriksaan: 10 Apr - 30 Jun"
+    },
+    {
       "name": "[PELAKSANAAN] STPIM 2025 (V-IBS26)",
       "type": "pencacahan",
       "endDate": "2025-07-31",
-      "other_jadwal": "Pemeriksaan: 13 Apr - 7 Agu"
-    },
-    {
-      "name": "IMK Triwulanan 2026 - PENCACAHAN",
-      "type": "pencacahan"
+      "other_jadwal": "Pemeriksaan: 13 Apr - 7 Aug"
     },
     {
       "name": "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026",
@@ -16,8 +24,8 @@
       "other_jadwal": "Pemeriksaan: 1 May - 30 Jun"
     }
   ],
-  "last_updated": "2026-04-08",
-  "chart_title": "Monitoring Statistik Industri",
+  "last_updated": "2026-04-15",
+  "chart_title": "Monitoring Statistik Industri Besar dan Sedang",
   "_survey_details_backup": {
     "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026": {
       "other_jadwal": "Pemeriksaan: 1 May - 30 Jun"
@@ -31,7 +39,15 @@
     },
     "[PELAKSANAAN] STPIM 2025 (V-IBS26)": {
       "endDate": "2025-07-31",
-      "other_jadwal": "Pemeriksaan: 13 Apr - 7 Agu"
+      "other_jadwal": "Pemeriksaan: 13 Apr - 7 Aug"
+    },
+    "SURVEI IBS TRIWULANAN (SIBSTR) 2026": {
+      "endDate": "2025-04-20",
+      "other_jadwal": "Pemeriksaan: 10 Apr - 30 Jun"
+    },
+    "SURVEI TRIWULANAN PELAKU USAHA (KEK-KI) 2026": {
+      "endDate": "2025-04-20",
+      "other_jadwal": "Pemeriksaan: 10 Apr - 30 Jun"
     }
   },
   "palette": "Pastel"
