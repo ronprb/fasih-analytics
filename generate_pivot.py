@@ -72,7 +72,12 @@ def build_pemutakhiran_pivot():
     if not os.path.exists(csv_path):
         return None
 
-    df = pd.read_csv(csv_path)
+    try:
+        df = pd.read_csv(csv_path)
+    except pd.errors.EmptyDataError:
+        # An empty DataFrame saved with to_csv() writes a 0-byte file that
+        # pandas cannot parse — treat it the same as "no data".
+        return None
 
     if df.empty:
         return None

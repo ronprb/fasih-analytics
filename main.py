@@ -247,8 +247,11 @@ async def main():
         if pemutakhiran_results:
             report_pemutakhiran_df = pd.concat(pemutakhiran_results, ignore_index=True)
             report_pemutakhiran_df.to_csv(f"outputs/csv/report_pemutakhiran_{timestamp}.csv", index=False)
-            report_pemutakhiran_df.to_csv(f"outputs/csv/report_pemutakhiran.csv", index=False)
             print(f"\n📁 Pemutakhiran data saved.\n")
+
+    # Always overwrite the canonical pemutakhiran CSV so stale data from a
+    # previous run never leaks into the pivot report on the next run.
+    report_pemutakhiran_df.to_csv("outputs/csv/report_pemutakhiran.csv", index=False)
 
     # Plot combined chart (pencacahan + pemutakhiran together)
     survey_collection_df = pd.read_csv('outputs/csv/survey_collection_deadline_adjusted.csv')
