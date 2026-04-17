@@ -133,18 +133,41 @@ async def main():
     # Fetch region1_id concurrently with semaphore
     async def fetch_region1_id(surveyPeriodId, prov_id):
         async with semaphore:
-            groupId = survey_collection_df.loc[survey_collection_df['survey_period_id'] == surveyPeriodId, 'regionGroupId'].iloc[0]
-            url = "https://fasih-sm.bps.go.id/region/api/v1/region/level1?groupId=" + groupId
-            response = await get_requests(url, headers=headers, cookies=cookies)
-            json_data = response.json()
-            level1_df = pd.DataFrame(json_data['data'])
-            region1_id = level1_df.loc[level1_df['fullCode'] == prov_id, 'id'].iloc[0]
-            print(f"Processed survey period ID {surveyPeriodId}: {prov_id} - Region 1 ID: {region1_id}")
-            return {
-                'surveyPeriodId': surveyPeriodId,
-                'prov_id': prov_id,
-                'region1Id': region1_id
-            }
+            response = None
+            try:
+                groupId = survey_collection_df.loc[survey_collection_df['survey_period_id'] == surveyPeriodId, 'regionGroupId'].iloc[0]
+                url = "https://fasih-sm.bps.go.id/region/api/v1/region/level1?groupId=" + groupId
+                response = await get_requests(url, headers=headers, cookies=cookies)
+
+                if not response.content:
+                    print(f"⚠️  Empty response for surveyPeriodId={surveyPeriodId}, prov_id={prov_id} — skipping.")
+                    return None
+
+                json_data = response.json()
+                level1_df = pd.DataFrame(json_data['data'])
+                matches = level1_df.loc[level1_df['fullCode'] == prov_id, 'id']
+                if matches.empty:
+                    print(f"⚠️  No region match for prov_id={prov_id} in surveyPeriodId={surveyPeriodId} — skipping.")
+                    return None
+                region1_id = matches.iloc[0]
+                print(f"Processed survey period ID {surveyPeriodId}: {prov_id} - Region 1 ID: {region1_id}")
+                return {
+                    'surveyPeriodId': surveyPeriodId,
+                    'prov_id': prov_id,
+                    'region1Id': region1_id
+                }
+            except Exception as e:
+                import traceback
+                raw_body = response.text[:300] if response is not None else "<no response>"
+                print(
+                    f"❌ Error in fetch_region1_id(surveyPeriodId={surveyPeriodId}, prov_id={prov_id})\n"
+                    f"   Exception type : {type(e).__name__}\n"
+                    f"   Exception msg  : {e}\n"
+                    f"   HTTP status    : {response.status_code if response is not None else 'N/A'}\n"
+                    f"   Response body  : {raw_body}\n"
+                    f"   Traceback:\n{traceback.format_exc()}"
+                )
+                return None
 
     region1_tasks = []
     for surveyPeriodId, prov_list in prov_sampel.items():
@@ -153,7 +176,7 @@ async def main():
         for prov_id in prov_list:
             region1_tasks.append(fetch_region1_id(surveyPeriodId, prov_id))
     region1_results = await asyncio.gather(*region1_tasks)
-    rows.extend(region1_results)
+    rows.extend([r for r in region1_results if r is not None])
 
     temp_df = pd.DataFrame(rows)
 
