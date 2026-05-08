@@ -26,18 +26,23 @@ def _load_session():
 
 
 def _session_valid(cookies_dict, csrf_token):
+    from config import BASE_HEADERS
     headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Origin": "https://fasih-sm.bps.go.id",
-        "Referer": "https://fasih-sm.bps.go.id/survey-collection/survey",
-        "User-Agent": "Mozilla/5.0",
+        **BASE_HEADERS,
         "X-XSRF-TOKEN": csrf_token,
     }
     try:
-        response = httpx.post(_TEST_URL, headers=headers, cookies=cookies_dict, json=_TEST_PAYLOAD, timeout=10)
+        response = httpx.post(
+            _TEST_URL,
+            headers=headers,
+            cookies=cookies_dict,
+            json=_TEST_PAYLOAD,
+            timeout=httpx.Timeout(30, connect=15.0),
+        )
+        print(f"   Session check status: {response.status_code}")
         return response.status_code == 200
-    except Exception:
+    except Exception as e:
+        print(f"   Session check failed ({type(e).__name__}): {e}")
         return False
 
 
@@ -57,17 +62,32 @@ def get_cookies_and_csrf():
     driver.get("https://fasih-sm.bps.go.id")
     input("✅ After logging in completely, press ENTER to continue...")
 
+    # Navigate to the survey page so the WAF issues cookies for that path
     driver.get("https://fasih-sm.bps.go.id/survey-collection/survey")
-    time.sleep(1)
+    time.sleep(3)  # Wait for WAF (F5) to fully set TS* session cookies
+
+    # Also hit the API URL directly so the WAF issues TS* cookies for the API path
+    driver.get(_TEST_URL.split('?')[0].replace('/datatable', ''))
+    time.sleep(2)
+
+    # Navigate back to the survey page for the final cookie snapshot
+    driver.get("https://fasih-sm.bps.go.id/survey-collection/survey")
+    time.sleep(3)
 
     selenium_cookies = driver.get_cookies()
+    driver.quit()
+
+    from urllib.parse import unquote
     csrf_token = None
     for cookie in selenium_cookies:
         if cookie['name'].lower() in ['x-xsrf-token', 'xsrf-token']:
-            csrf_token = cookie['value']
-    driver.quit()
+            # F5 WAF sometimes URL-encodes the XSRF value
+            csrf_token = unquote(cookie['value'])
+            break
 
     cookies_dict = {cookie['name']: cookie['value'] for cookie in selenium_cookies}
+
+    print(f"💾 Captured {len(cookies_dict)} cookies. CSRF present: {bool(csrf_token)}")
     _save_session(cookies_dict, csrf_token)
     print("💾 Session cached for next run.\n")
     return cookies_dict, csrf_token

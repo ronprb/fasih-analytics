@@ -24,7 +24,7 @@
       "other_jadwal": "Pemeriksaan: 1 May - 30 Jun"
     }
   ],
-  "last_updated": "2026-04-17",
+  "last_updated": "2026-05-08",
   "chart_title": "Monitoring Statistik Industri Besar dan Sedang",
   "_survey_details_backup": {
     "PEMUTAKHIRAN DIREKTORI PERUSAHAAN AWAL 2026": {
@@ -50,5 +50,5 @@
       "other_jadwal": "Pemeriksaan: 10 Apr - 30 Jun"
     }
   },
-  "palette": "Pastel"
+  "palette": "Pastel_v2"
 }

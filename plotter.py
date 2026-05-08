@@ -42,7 +42,7 @@ def generate_plots_2(df, survey_collection_df, prefered_status_order, option:int
     _cfg_path = "input/survey_config.json"
     _top = json.load(open(_cfg_path)) if _os.path.exists(_cfg_path) else {}
     _chart_title = _top.get("chart_title", "Monitoring Statistik Industri")
-    _user_title = _top.get("user_assignment_title", "Report User Assignments")
+    _user_title = _top.get("user_assignment_title", "Status Assignment Petugas")
 
     excluded_cols = {'kd_kab', 'time_stamp', 'name', 'prov_id', 'total', 'assigned', 'have-not-assigned', 'type'}
     if option == 1:

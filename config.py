@@ -3,7 +3,14 @@ BASE_HEADERS = {
     "Content-Type": "application/json",
     "Origin": "https://fasih-sm.bps.go.id",
     "Referer": "https://fasih-sm.bps.go.id/survey-collection/survey",
-    "User-Agent": "Mozilla/5.0",
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/136.0.0.0 Safari/537.36"
+    ),
+    "Accept-Language": "en-US,en;q=0.9,id;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
 }
 
 payload_survey ={
@@ -90,7 +97,7 @@ palette_options = {
         'EDITED': '#42A5F5',      # medium blue
         'REJECTED': '#FF7043',    # orange-red (distinct from OPEN)
         'REVOKED': '#AB47BC',     # medium purple
-        'SUBMITTED': '#FFA726',   # amber/orange
+        'SUBMITTED': '#F2C94C',   # amber/orange
         'DRAFT': '#78909C',       # steel blue-grey
         'SELESAILISTING': '#90A4AE',
         'BELUMSELESAILISTING': '#F44336',
@@ -166,6 +173,24 @@ palette_options = {
         'SUDAHTARIKSAMPEL': '#B5EAD7',
         'assigned': '#B5EAD7',
         'have-not-assigned': '#FF9AA2',
+    },
+    "Pastel_v2": {
+        # Slightly deeper pastels — just a touch more depth than Pastel
+        'COMPLETED': '#93D9B9',   # slightly deeper mint
+        'clean': '#93D9B9',
+        'OPEN': '#F0838C',        # slightly deeper rose
+        'belum_entry': '#F0838C',
+        'APPROVED': '#BFBFBF',    # slightly deeper grey
+        'EDITED': '#94C5D9',      # slightly deeper sky blue
+        'REJECTED': '#F4BFA2',    # slightly deeper peach
+        'REVOKED': '#B1B9DE',     # slightly deeper periwinkle
+        'SUBMITTED': '#F7F1BE',   # soft lemon
+        'DRAFT': '#D0A4D5',       # slightly deeper lavender
+        'SELESAILISTING': '#BFBFBF',
+        'BELUMSELESAILISTING': '#F0838C',
+        'SUDAHTARIKSAMPEL': '#93D9B9',
+        'assigned': '#93D9B9',
+        'have-not-assigned': '#F0838C',
     },
     "DarkMode": {
         'COMPLETED': '#2E7D32',
