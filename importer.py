@@ -5,9 +5,10 @@ import httpx
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from config import LOGIN_URL, SURVEY_PAGE_URL, survey_datatable_url
 
 COOKIE_CACHE_PATH = "input/session_cache.json"
-_TEST_URL = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/datatable?surveyType=Pencacahan"
+_TEST_URL = survey_datatable_url
 _TEST_PAYLOAD = {"pageNumber": 0, "pageSize": 1, "sortBy": "CREATED_AT", "sortDirection": "DESC", "keywordSearch": ""}
 
 
@@ -59,11 +60,11 @@ def get_cookies_and_csrf():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     print("🔐 Opening browser... please log in manually.")
-    driver.get("https://fasih-sm.bps.go.id")
+    driver.get(LOGIN_URL)
     input("✅ After logging in completely, press ENTER to continue...")
 
     # Navigate to the survey page so the WAF issues cookies for that path
-    driver.get("https://fasih-sm.bps.go.id/survey-collection/survey")
+    driver.get(SURVEY_PAGE_URL)
     time.sleep(3)  # Wait for WAF (F5) to fully set TS* session cookies
 
     # Also hit the API URL directly so the WAF issues TS* cookies for the API path
@@ -71,7 +72,7 @@ def get_cookies_and_csrf():
     time.sleep(2)
 
     # Navigate back to the survey page for the final cookie snapshot
-    driver.get("https://fasih-sm.bps.go.id/survey-collection/survey")
+    driver.get(SURVEY_PAGE_URL)
     time.sleep(3)
 
     selenium_cookies = driver.get_cookies()

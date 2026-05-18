@@ -4,7 +4,22 @@ import argparse
 import os
 import time
 from importer import get_cookies_and_csrf, get_payload, COOKIE_CACHE_PATH
-from config import BASE_HEADERS, payload_survey, report_progress_assignment_url, report_user_assignment_url, progress_status_order, assignment_status_order, pemutakhiran_base_url, pemutakhiran_payload, pemutakhiran_status_order
+from config import (
+    BASE_HEADERS,
+    payload_survey,
+    survey_datatable_url,
+    surveys_base_url,
+    survey_periods_url,
+    myinfo_url,
+    region_level1_url,
+    report_progress_assignment_url,
+    report_user_assignment_url,
+    progress_status_order,
+    assignment_status_order,
+    pemutakhiran_base_url,
+    pemutakhiran_payload,
+    pemutakhiran_status_order,
+)
 from api_client import post_requests, get_requests
 from adjust_survey import adjust_period, adjust_sample, adjust_deadline
 from transformer import json_to_df, pemutakhiran_json_to_df
@@ -21,8 +36,7 @@ async def main():
     headers = {**BASE_HEADERS, "X-XSRF-TOKEN": csrf_token}
 
     # Fetch survey list (POST)
-    url = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/datatable?surveyType=Pencacahan"
-    response = await post_requests(url, headers, cookies, payload_survey)
+    response = await post_requests(survey_datatable_url, headers, cookies, payload_survey)
     json_data = response.json()
 
     survey_collection_df = pd.DataFrame(json_data['data']['content'])
@@ -53,9 +67,6 @@ async def main():
             return str(d)
 
     # Fetch metadata (GET) concurrently
-    surveys_base_url = "https://fasih-sm.bps.go.id/survey/api/v1/surveys/"
-    survey_periods_url = "https://fasih-sm.bps.go.id/survey/api/v1/survey-periods/my?surveyId="
-
     async def fetch_metadata(i, j):
         async with semaphore:
             try:
@@ -115,7 +126,7 @@ async def main():
 
     async def fetch_prov_sample(surveyPeriodId):
         async with semaphore:
-            url = "https://fasih-sm.bps.go.id/survey/api/v1/users/myinfo?surveyPeriodId=" + surveyPeriodId
+            url = myinfo_url + surveyPeriodId
             response = await get_requests(url, headers, cookies)
             json_data = response.json()['data']
             groupId = survey_collection_df.loc[survey_collection_df['survey_period_id']==surveyPeriodId, 'regionGroupId']
@@ -136,7 +147,7 @@ async def main():
             response = None
             try:
                 groupId = survey_collection_df.loc[survey_collection_df['survey_period_id'] == surveyPeriodId, 'regionGroupId'].iloc[0]
-                url = "https://fasih-sm.bps.go.id/region/api/v1/region/level1?groupId=" + groupId
+                url = region_level1_url + groupId
                 response = await get_requests(url, headers=headers, cookies=cookies)
 
                 if not response.content:

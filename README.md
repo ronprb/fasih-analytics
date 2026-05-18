@@ -1,6 +1,6 @@
 # fasih-analytics
 
-Tool untuk mengambil data progres dan assignment petugas survei dari platform FASIH (https://fasih-sm.bps.go.id) dan menghasilkan grafik monitoring serta laporan pivot Excel.
+Tool untuk mengambil data progres dan assignment petugas survei dari platform FASIH (https://fasih-sm.bps.go.id/app) dan menghasilkan grafik monitoring serta laporan pivot Excel.
 
 ## Fitur
 

@@ -14,7 +14,7 @@ _RETRYABLE_ERRORS = (
 def _make_client(timeout: float) -> httpx.AsyncClient:
     """
     Create an AsyncClient that:
-    - Forces HTTP/1.1  (server at fasih-sm.bps.go.id does not advertise HTTP/2
+    - Forces HTTP/1.1  (FASIH server does not advertise HTTP/2
       via ALPN, which causes ReadError when httpx defaults to h2)
     - Uses a split timeout: short connect phase, generous read phase
     """

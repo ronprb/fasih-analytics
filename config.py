@@ -1,8 +1,13 @@
+LOGIN_URL = "https://fasih-sm.bps.go.id"
+APP_BASE_URL = "https://fasih-sm.bps.go.id/app"
+API_BASE_URL = f"{APP_BASE_URL}/api"
+SURVEY_PAGE_URL = f"{APP_BASE_URL}/survey-collection/survey"
+
 BASE_HEADERS = {
     "Accept": "application/json",
     "Content-Type": "application/json",
     "Origin": "https://fasih-sm.bps.go.id",
-    "Referer": "https://fasih-sm.bps.go.id/survey-collection/survey",
+    "Referer": SURVEY_PAGE_URL,
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -21,10 +26,16 @@ payload_survey ={
     "keywordSearch": ""
 }
 
-report_user_assignment_url = "https://fasih-sm.bps.go.id/analytic/api/v2/assignment/report-user-assignment"
-report_progress_assignment_url = "https://fasih-sm.bps.go.id/analytic/api/v2/assignment/report-progress-assignment"
+survey_datatable_url = f"{API_BASE_URL}/survey/api/v1/surveys/datatable?surveyType=pencacahan"
+surveys_base_url = f"{API_BASE_URL}/survey/api/v1/surveys/"
+survey_periods_url = f"{API_BASE_URL}/survey/api/v1/survey-periods/my?surveyId="
+myinfo_url = f"{API_BASE_URL}/survey/api/v1/users/myinfo?surveyPeriodId="
+region_level1_url = f"{API_BASE_URL}/region/api/v1/region/level1?groupId="
 
-pemutakhiran_base_url = "https://fasih-sm.bps.go.id/assignment-general/api/assignment-region/datatable?periodeId="
+report_user_assignment_url = f"{API_BASE_URL}/analytic/api/v2/assignment/report-user-assignment"
+report_progress_assignment_url = f"{API_BASE_URL}/analytic/api/v2/assignment/report-progress-assignment"
+
+pemutakhiran_base_url = f"{API_BASE_URL}/assignment-general/api/assignment-region/datatable?periodeId="
 pemutakhiran_payload = {
     "draw": 2,
     "columns": [
