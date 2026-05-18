@@ -1,7 +1,7 @@
 import pandas as pd
 
 def adjust_period(df):
-    period_df = pd.read_excel("input/period.xlsx")    
+    period_df = pd.read_excel("inputs/period.xlsx")    
     period_df.set_index('name', inplace=True)
     df.set_index('name', inplace=True)
     df.update(period_df)
@@ -9,7 +9,7 @@ def adjust_period(df):
     return df
 
 def adjust_sample(df):
-    sample_df = pd.read_excel("input/dspu_dspp.xlsx")
+    sample_df = pd.read_excel("inputs/dspu_dspp.xlsx")
     sample_df["total"] = sample_df['sampel_utama'] + sample_df['sampel_pengganti']   
     numeric_cols = ['sampel_utama', 'sampel_pengganti', 'total']
     sample_df[numeric_cols] = sample_df[numeric_cols].fillna(0).astype(int)
@@ -59,4 +59,3 @@ def adjust_deadline(df):
         df.loc[mask, 'other_jadwal'] = entry.get('other_jadwal') or None
 
     return df
-

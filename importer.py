@@ -7,13 +7,13 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from config import LOGIN_URL, SURVEY_PAGE_URL, survey_datatable_url
 
-COOKIE_CACHE_PATH = "input/session_cache.json"
+COOKIE_CACHE_PATH = "inputs/session_cache.json"
 _TEST_URL = survey_datatable_url
 _TEST_PAYLOAD = {"pageNumber": 0, "pageSize": 1, "sortBy": "CREATED_AT", "sortDirection": "DESC", "keywordSearch": ""}
 
 
 def _save_session(cookies_dict, csrf_token):
-    os.makedirs("input", exist_ok=True)
+    os.makedirs("inputs", exist_ok=True)
     with open(COOKIE_CACHE_PATH, "w") as f:
         json.dump({"cookies": cookies_dict, "csrf_token": csrf_token}, f)
 

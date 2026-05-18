@@ -3,7 +3,7 @@ import os
 from datetime import date
 from InquirerPy import inquirer
 
-CONFIG_PATH = "input/survey_config.json"
+CONFIG_PATH = "inputs/survey_config.json"
 
 
 def load_survey_config() -> list:
@@ -24,7 +24,7 @@ def load_selected_surveys() -> list:
 
 
 def save_survey_config(config: list):
-    os.makedirs("input", exist_ok=True)
+    os.makedirs("inputs", exist_ok=True)
     # Preserve existing top-level fields (e.g. chart_title) when re-saving
     existing = {}
     if os.path.exists(CONFIG_PATH):

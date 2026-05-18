@@ -8,7 +8,7 @@ from datetime import datetime
 
 def _load_palette():
     import json, os as _os
-    cfg_path = "input/survey_config.json"
+    cfg_path = "inputs/survey_config.json"
     if _os.path.exists(cfg_path):
         cfg = json.load(open(cfg_path))
         palette_name = cfg.get("palette", "Pastel")
@@ -39,7 +39,7 @@ def generate_plots_2(df, survey_collection_df, prefered_status_order, option:int
         title_map = {e['name']: e['title'] for e in _config if e.get('title')}
 
     import json, os as _os
-    _cfg_path = "input/survey_config.json"
+    _cfg_path = "inputs/survey_config.json"
     _top = json.load(open(_cfg_path)) if _os.path.exists(_cfg_path) else {}
     _chart_title = _top.get("chart_title", "Monitoring Statistik Industri")
     _user_title = _top.get("user_assignment_title", "Status Assignment Petugas")
