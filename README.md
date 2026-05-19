@@ -8,6 +8,7 @@ Tool untuk mengambil data progres dan assignment petugas survei dari platform FA
 - Fetch data progres pencacahan dan pemutakhiran secara paralel (async)
 - Interaktif memilih survei yang ingin di-scrape
 - Generate grafik stacked bar per survei dan per provinsi
+- Generate grafik donut status kabupaten per survei
 - Generate laporan pivot Excel
 - Mendukung kustomisasi judul grafik via argumen CLI
 
@@ -49,6 +50,7 @@ python main.py
 | `--relogin` | Hapus session cache dan login ulang |
 | `--title "Judul"` | Set judul grafik progres (disimpan permanen) |
 | `--user-title "Judul"` | Set judul grafik penugasan user (disimpan permanen) |
+| `--kab-status-title "Judul"` | Set judul grafik donut status kabupaten (disimpan permanen) |
 
 Contoh:
 ```bash
@@ -64,6 +66,7 @@ python main.py --title "Monitoring Maret 2026"
 - `outputs/pivot_report.xlsx` — laporan pivot Excel
 - `images/progress_assignment.png` — grafik progres pencacahan
 - `images/user_assignment.png` — grafik penugasan user
+- `images/kabupaten_status.png` — grafik donut status kabupaten per survei
 
 ## Dependencies
 

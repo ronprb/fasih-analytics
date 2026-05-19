@@ -24,7 +24,7 @@ from api_client import post_requests, get_requests
 from adjust_survey import adjust_period, adjust_sample, adjust_deadline
 from transformer import json_to_df, pemutakhiran_json_to_df
 from data_loader import get_survey_name
-from plotter import generate_plots_2
+from plotter import generate_plots_2, generate_kabupaten_status_donut_dashboard
 from survey_selector import select_surveys
 from generate_pivot import main as generate_pivot
 
@@ -304,6 +304,12 @@ async def main():
     if not combined_progress_df.empty:
         combined_status_order = progress_status_order + pemutakhiran_status_order
         generate_plots_2(combined_progress_df, survey_collection_df, combined_status_order, 1, selected_names)
+        generate_kabupaten_status_donut_dashboard(
+            combined_progress_df,
+            survey_collection_df,
+            combined_status_order,
+            selected_names,
+        )
 
 
 
@@ -326,13 +332,14 @@ if __name__ == "__main__":
     parser.add_argument("--relogin", action="store_true", help="Force fresh login, ignoring cached session")
     parser.add_argument("--title", type=str, help="Set the primary chart title (saved for future runs)")
     parser.add_argument("--user-title", type=str, help="Set the user assignment chart title (saved for future runs)")
+    parser.add_argument("--kab-status-title", type=str, help="Set the kabupaten status donut chart title (saved for future runs)")
     args = parser.parse_args()
 
     if args.relogin and os.path.exists(COOKIE_CACHE_PATH):
         os.remove(COOKIE_CACHE_PATH)
         print("🗑️  Cached session cleared.\n")
 
-    if args.title or args.user_title:
+    if args.title or args.user_title or args.kab_status_title:
         import json
         from survey_selector import CONFIG_PATH
         cfg = json.load(open(CONFIG_PATH)) if os.path.exists(CONFIG_PATH) else {}
@@ -342,6 +349,9 @@ if __name__ == "__main__":
         if args.user_title:
             cfg["user_assignment_title"] = args.user_title
             print(f"📝 User assignment title set to: {args.user_title}\n")
+        if args.kab_status_title:
+            cfg["kabupaten_status_title"] = args.kab_status_title
+            print(f"📝 Kabupaten status chart title set to: {args.kab_status_title}\n")
         with open(CONFIG_PATH, "w") as f:
             json.dump(cfg, f, indent=2, ensure_ascii=False)
 
