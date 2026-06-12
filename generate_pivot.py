@@ -35,11 +35,12 @@ def build_assignment_pivot():
     df["Submitted"] = df[submitted_cols].fillna(0).sum(axis=1) if submitted_cols else 0
     df["Completed"] = df[completed_cols].fillna(0).sum(axis=1) if completed_cols else 0
     df["Target"] = df["total"].fillna(0)
+    df["OPEN"] = df["OPEN"].fillna(0)
 
-    df = df[["name", "kd_kab", "Target", "Submitted", "Completed"]]
+    df = df[["name", "kd_kab", "Target", "OPEN", "Submitted", "Completed"]]
 
     survey_names = df["name"].unique().tolist()
-    metrics = ["Target", "Submitted", "Completed"]
+    metrics = ["Target", "OPEN", "Submitted", "Completed"]
 
     # Build multi-level columns: (survey_name, metric)
     col_tuples = [(s, m) for s in survey_names for m in metrics]
@@ -52,10 +53,12 @@ def build_assignment_pivot():
             sub = df[(df["name"] == name) & (df["kd_kab"] == kd)]
             if not sub.empty:
                 row[(name, "Target")]    = sub["Target"].iloc[0]
+                row[(name, "OPEN")]      = sub["OPEN"].iloc[0]
                 row[(name, "Submitted")] = sub["Submitted"].iloc[0]
                 row[(name, "Completed")] = sub["Completed"].iloc[0]
             else:
                 row[(name, "Target")]    = 0
+                row[(name, "OPEN")]      = 0
                 row[(name, "Submitted")] = 0
                 row[(name, "Completed")] = 0
         rows.append(row)
